@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mdscript name="DrJele_DiplomacyAgents" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="md.xsd">
+    <cues>
+
+        <!--
+          Configuration. Re-read on every savegame load, so editing a value below and reloading is
+          enough - no new game required. Each one can also be overridden at runtime without touching
+          this file, by setting the matching global variable:
+            <set_value name="global.$DrJeleDiplomacyXpFactor" exact="5"/>
+          Those globals are also what the in-game options menu writes - see
+          drjele_diplomacy_agents_options.xml.
+
+          Every default here is the vanilla value, so an installed-but-untouched mod changes nothing.
+
+          The settings are republished into one global table rather than read out of this cue directly.
+          The code that reads them lives in patches inside the vanilla scripts, and a global variable
+          is something those can look up defensively; a reference to a cue in this script would be a
+          hard dependency, and a failed load here would then take diplomacy down with it. Every reader
+          also carries the vanilla literal as a last fallback.
+        -->
+        <cue name="Configuration" instantiate="true" namespace="static" version="1">
+            <conditions>
+                <event_cue_signalled cue="md.Setup.Start"/>
+            </conditions>
+            <actions>
+                <set_value name="$XpFactor" exact="1" comment="multiplies the experience an agent earns per action; 1 is vanilla"/>
+                <set_value name="$InjuredXpPercent" exact="0" comment="percent of a no-risk experience roll given to an agent that comes back injured; 0 is vanilla, which gives nothing"/>
+                <set_value name="$RiskPercent" exact="100" comment="scales the injury and death chances of a failed risky action; 100 is vanilla, 0 makes agents indestructible"/>
+                <set_value name="$AgentsCanDie" exact="1" comment="0 caps the worst outcome of a risky action at an injury; 1 is vanilla, where an agent can also be killed"/>
+                <set_value name="$AgentGender" exact="0" comment="0 any, 1 female only, 2 male only - applies to agents spawned from now on"/>
+
+                <!--
+                  Faction id -> [female character, male character] out of libraries/characters.xml. Keyed by
+                  faction.id rather than by the faction keyword on purpose: a keyword for a faction whose
+                  DLC is missing would not resolve, while an id string simply never matches.
+
+                  The keys are written in the $name form because every string key in an MD table has to
+                  start with a '$' - a plain 'argon' is refused with "Failed to set table[].argon". The
+                  lookup side builds the same key with '$' + faction.id.
+
+                  The first eleven are the factions whose agents ship in both genders. The rest come from
+                  the characters this mod adds. The Paranid-race factions - Paranid, Holy Order, Alliance,
+                  Trinity, Buccaneers - and the Boron are absent: the game holds no female model for either
+                  race, so their agents keep the vanilla pick whatever this is set to.
+                -->
+                <set_value name="$AgentCharacters" exact="table[]"/>
+                <set_value name="$AgentCharacters.$argon" exact="['agent_argon_female',     'agent_argon_male']"/>
+                <set_value name="$AgentCharacters.$antigone" exact="['agent_antigone_female',  'agent_antigone_male']"/>
+                <set_value name="$AgentCharacters.$hatikvah" exact="['agent_hatikvah_female',  'agent_hatikvah_male']"/>
+                <set_value name="$AgentCharacters.$loanshark" exact="['agent_loansharks_female','agent_loansharks_male']"/>
+                <set_value name="$AgentCharacters.$scavenger" exact="['agent_scavenger_female', 'agent_scavenger_male']"/>
+                <set_value name="$AgentCharacters.$split" exact="['agent_split_female',     'agent_split_male']"/>
+                <set_value name="$AgentCharacters.$freesplit" exact="['agent_freesplit_female', 'agent_freesplit_male']"/>
+                <set_value name="$AgentCharacters.$court" exact="['agent_court_female',     'agent_court_male']"/>
+                <set_value name="$AgentCharacters.$pioneers" exact="['agent_pioneers_female',  'agent_pioneers_male']"/>
+                <set_value name="$AgentCharacters.$terran" exact="['agent_terran_female',    'agent_terran_male']"/>
+                <set_value name="$AgentCharacters.$yaki" exact="['agent_yaki_female',      'agent_yaki_male']"/>
+
+                <!--
+                  These four come from the characters this mod adds in libraries/characters.xml, for the
+                  factions vanilla gives a single agent character to. The Quettanaut male is the vanilla
+                  entry - only its female counterpart was missing.
+                -->
+                <set_value name="$AgentCharacters.$kaori" exact="['drjele_agent_kaori_female',      'agent_kaori_arg']"/>
+                <set_value name="$AgentCharacters.$teladi" exact="['drjele_agent_teladi_female',     'drjele_agent_teladi_male']"/>
+                <set_value name="$AgentCharacters.$ministry" exact="['drjele_agent_ministry_female',   'drjele_agent_ministry_male']"/>
+                <set_value name="$AgentCharacters.$scaleplate" exact="['drjele_agent_scaleplate_female', 'drjele_agent_scaleplate_male']"/>
+
+                <set_value name="global.$DrJeleDiplomacyConfig" exact="table[$XpFactor         = $XpFactor,
+                                                                    $InjuredXpPercent = $InjuredXpPercent,
+                                                                    $RiskPercent      = $RiskPercent,
+                                                                    $AgentsCanDie     = $AgentsCanDie,
+                                                                    $AgentGender      = $AgentGender,
+                                                                    $AgentCharacters  = $AgentCharacters]"/>
+            </actions>
+        </cue>
+
+    </cues>
+</mdscript>

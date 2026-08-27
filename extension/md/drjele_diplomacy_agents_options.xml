@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  In-game options, through SirNukes Mod Support APIs. Everything that touches that API lives in
+  this file, so if the API is not installed nothing here ever runs and the mod keeps working off
+  the constants in drjele_diplomacy_agents.xml.
+
+  All four callbacks only ever write the global override variables the patches already read, so
+  the patched vanilla libraries know nothing about menus.
+-->
+<mdscript name="DrJele_DiplomacyAgentsOptions" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="md.xsd">
+    <cues>
+
+        <!--
+          The API stores an option's value in the savegame under its $id, and hands it straight back
+          to the widget as its start value. A stored value outside the slider's range fails widget
+          validation and takes the whole Extension Options menu down with it, so the range and the
+          unit of an option must never change under a $id that has already shipped - give it a new
+          one instead. That is why these ids carry their unit.
+
+          Simple_Menu_Options only knows 'button' and 'slidercell', so the gender filter is a
+          three-step slider rather than a dropdown; its mouseover carries the legend.
+        -->
+        <cue name="RegisterOptions" instantiate="true" version="1">
+            <conditions>
+                <event_cue_signalled cue="md.Simple_Menu_Options.Reloaded"/>
+            </conditions>
+            <actions>
+                <signal_cue_instantly
+                        cue="md.Simple_Menu_Options.Register_Option"
+                        param="table[
+            $id        = 'drjele_diplomacy_xp_factor',
+            $category  = 'Diplomacy Agents',
+            $name      = 'Agent experience multiplier',
+            $mouseover = 'Multiplies the experience an agent earns from an action. Vanilla is 1x: 1-15 points per action, 400 in total to reach Spymaster.',
+            $type      = 'slidercell',
+            $default   = 1,
+            $args      = table[$min = 1, $max = 20, $step = 1, $suffix = 'x'],
+            $callback  = OnXpFactorChanged,
+            ]"/>
+                <signal_cue_instantly
+                        cue="md.Simple_Menu_Options.Register_Option"
+                        param="table[
+            $id        = 'drjele_diplomacy_injured_xp_percent',
+            $category  = 'Diplomacy Agents',
+            $name      = 'Experience when injured',
+            $mouseover = 'An agent that comes back injured gets this percent of a normal no-risk experience roll, split between both skills. Vanilla gives nothing, so 0 is off. A failed action the agent survives already pays experience.',
+            $type      = 'slidercell',
+            $default   = 0,
+            $args      = table[$min = 0, $max = 100, $step = 10, $suffix = ' %'],
+            $callback  = OnInjuredXpChanged,
+            ]"/>
+                <signal_cue_instantly
+                        cue="md.Simple_Menu_Options.Register_Option"
+                        param="table[
+            $id        = 'drjele_diplomacy_risk_percent',
+            $category  = 'Diplomacy Agents',
+            $name      = 'Agent risk',
+            $mouseover = 'Scales the injury and death chances a failed risky action rolls against. 100 is vanilla (up to 70 percent injury, 30 percent death), 0 means an agent can never be hurt or killed.',
+            $type      = 'slidercell',
+            $default   = 100,
+            $args      = table[$min = 0, $max = 100, $step = 5, $suffix = ' %'],
+            $callback  = OnRiskChanged,
+            ]"/>
+                <signal_cue_instantly
+                        cue="md.Simple_Menu_Options.Register_Option"
+                        param="table[
+            $id        = 'drjele_diplomacy_agents_can_die',
+            $category  = 'Diplomacy Agents',
+            $name      = 'Agents can die',
+            $mouseover = 'On is vanilla: a failed risky action can kill the agent outright, up to a 30 percent chance. Off caps the worst it can do at an injury, without touching how often one happens.',
+            $type      = 'button',
+            $default   = 1,
+            $callback  = OnAgentsCanDieChanged,
+            ]"/>
+                <signal_cue_instantly
+                        cue="md.Simple_Menu_Options.Register_Option"
+                        param="table[
+            $id        = 'drjele_diplomacy_agent_gender',
+            $category  = 'Diplomacy Agents',
+            $name      = 'Agent gender (0 any, 1 female, 2 male)',
+            $mouseover = 'Which agents factions put up for hire from now on. Agents you already know keep the gender they were born with - fire one and the faction sends a new one. The Paranid factions and the Boron ignore it - the game holds no female model for either race.',
+            $type      = 'slidercell',
+            $default   = 0,
+            $args      = table[$min = 0, $max = 2, $step = 1],
+            $callback  = OnGenderChanged,
+            ]"/>
+            </actions>
+        </cue>
+
+        <cue name="OnXpFactorChanged" instantiate="true">
+            <conditions>
+                <event_cue_signalled/>
+            </conditions>
+            <actions>
+                <set_value name="global.$DrJeleDiplomacyXpFactor" exact="event.param.$value"/>
+            </actions>
+        </cue>
+
+        <cue name="OnInjuredXpChanged" instantiate="true">
+            <conditions>
+                <event_cue_signalled/>
+            </conditions>
+            <actions>
+                <set_value name="global.$DrJeleDiplomacyInjuredXpPercent" exact="event.param.$value"/>
+            </actions>
+        </cue>
+
+        <cue name="OnRiskChanged" instantiate="true">
+            <conditions>
+                <event_cue_signalled/>
+            </conditions>
+            <actions>
+                <set_value name="global.$DrJeleDiplomacyRiskPercent" exact="event.param.$value"/>
+            </actions>
+        </cue>
+
+        <cue name="OnAgentsCanDieChanged" instantiate="true">
+            <conditions>
+                <event_cue_signalled/>
+            </conditions>
+            <actions>
+                <set_value name="global.$DrJeleDiplomacyAgentsCanDie" exact="if event.param.$value then 1 else 0"/>
+            </actions>
+        </cue>
+
+        <cue name="OnGenderChanged" instantiate="true">
+            <conditions>
+                <event_cue_signalled/>
+            </conditions>
+            <actions>
+                <set_value name="global.$DrJeleDiplomacyAgentGender" exact="event.param.$value"/>
+            </actions>
+        </cue>
+
+    </cues>
+</mdscript>

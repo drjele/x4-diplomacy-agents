@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<content id="drjele_diplomacy_agents"
+         name="Diplomacy Agents"
+         description="Sliders for the diplomacy agents: an experience multiplier, experience for agents that come back injured, a scale on the injury and death chances of risky actions, a switch that stops an agent being killed outright, and a filter that makes the agents factions offer you all female or all male - including the Quettanauts, who in the base game can only ever offer men. Everything starts at the vanilla value, so the mod changes nothing until you turn a slider up. Works on an existing savegame."
+         author="drjele"
+         version="100"
+         date="2026-08-27"
+         save="0"
+>
+    <text language="44"
+          name="Diplomacy Agents"
+          description="Sliders for the diplomacy agents: an experience multiplier, experience for agents that come back injured, a scale on the injury and death chances of risky actions, a switch that stops an agent being killed outright, and a filter that makes the agents factions offer you all female or all male - including the Quettanauts, who in the base game can only ever offer men. Everything starts at the vanilla value, so the mod changes nothing until you turn a slider up. Works on an existing savegame."
+    />
+    <dependency version="900"/>
+    <dependency id="ws_2042901274" optional="true" name="SirNukes Mod Support APIs" comment="only for the in-game options menu; the mod works without it"/>
+    <dependency id="ego_dlc_timelines" optional="true" name="X4: Timelines" comment="only for the Quettanaut agent character; without it that faction does not exist either"/>
+</content>

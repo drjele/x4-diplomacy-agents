@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Two single-gender groups for the Teladi agent characters below.
+
+  Vanilla routes every Teladi-race agent through 'teladi.agent' -> 'teladi.factionrepresentative',
+  which holds the male and the female representative macro together. That is why a Teladi agent can
+  already turn up either way - and also why the gender filter cannot force one: there is nothing to
+  choose between, only the one group. Splitting the two macros apart gives it something to aim at.
+-->
+<diff>
+
+    <add sel="/characters">
+        <character name="drjele.teladi.agent.female">
+            <select macro="character_teladi_female_rep_01_macro"/>
+        </character>
+        <character name="drjele.teladi.agent.male">
+            <select macro="character_teladi_male_rep_01_macro"/>
+        </character>
+    </add>
+
+</diff>

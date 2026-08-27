@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Patch for the vanilla agent spawner, so the agents factions offer you can be filtered to one
+  gender.
+
+  Vanilla picks the agent's character out of the CharacterDB with <select tags="tag.agent">, which
+  has no gender criterion - the DB holds a separate entry per gender instead. create_cue_actor's
+  ref attribute takes a character id from an expression, so naming the entry ourselves is the whole
+  trick; the faction id -> [female, male] table lives in drjele_diplomacy_agents.xml.
+
+  Only the do_else branch is touched, the one that spawns an ordinary faction agent. The branch
+  above it, which spawns a scripted agent from a definition handed in by the caller, is left alone,
+  as is everything the spawned actor goes through afterwards.
+-->
+<diff>
+
+    <replace sel="//cue[@name='AddAgent']/actions/do_for_each/do_else[create_cue_actor/select/@tags='tag.agent']">
+        <do_else>
+            <!--
+              Falls back to the vanilla pick whenever the filter is off, the faction has no gendered pair
+              in the table (the Paranid-race factions and the Boron, which the game has no female model
+              for), or the
+              configuration script did not load - so no faction can ever end up without an agent.
+            -->
+            <set_value name="$DrJeleAgentGender" exact="if global.$DrJeleDiplomacyAgentGender? then global.$DrJeleDiplomacyAgentGender else (if global.$DrJeleDiplomacyConfig? then global.$DrJeleDiplomacyConfig.$AgentGender else 0)"/>
+            <set_value name="$DrJeleAgentCharacter" exact="null"/>
+            <do_if value="$DrJeleAgentGender gt 0">
+                <set_value name="$DrJeleAgentCharacters" exact="@global.$DrJeleDiplomacyConfig.$AgentCharacters.{'$' + $AgentActorOwner.id}"/>
+                <do_if value="$DrJeleAgentCharacters">
+                    <set_value name="$DrJeleAgentCharacter" exact="$DrJeleAgentCharacters.{$DrJeleAgentGender}" comment="the table lists female first, so the option value doubles as the index"/>
+                </do_if>
+            </do_if>
+
+            <do_if value="$DrJeleAgentCharacter">
+                <create_cue_actor name="$AgentActor" cue="AgentsActivated" ref="$DrJeleAgentCharacter" seed="this.$seed">
+                    <owner exact="$AgentActorOwner"/>
+                </create_cue_actor>
+            </do_if>
+            <do_else>
+                <create_cue_actor name="$AgentActor" cue="AgentsActivated" seed="this.$seed">
+                    <select tags="tag.agent" faction="$AgentActorOwner"/>
+                    <owner exact="$AgentActorOwner"/>
+                </create_cue_actor>
+            </do_else>
+            <signal_cue_instantly cue="AgentCreated" param="$AgentActor"/>
+        </do_else>
+    </replace>
+
+</diff>
