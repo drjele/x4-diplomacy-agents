@@ -1,5 +1,9 @@
 # Diplomacy Agents for X4: Foundations
 
+<p align="center">
+  <img src="extension/preview.jpg" alt="Diplomacy Agents" width="512">
+</p>
+
 X4 9.00 gives every faction an agent you can hire and send on negotiation and espionage actions. Those agents learn slowly — an action pays 1 to 15 experience and the top rank, Spymaster, sits at 400 — and the interesting actions are the ones that can get the agent injured for twenty minutes or killed outright, taking their experience with them.
 
 This mod turns those numbers into sliders: how fast agents learn, whether an injured agent gets anything out of the attempt, how dangerous a failed action really is, and which gender of agent the factions put up for hire.
