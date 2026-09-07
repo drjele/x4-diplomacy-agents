@@ -4,7 +4,7 @@
          description="Sliders for the diplomacy agents: an experience multiplier, experience for agents that come back injured, a scale on the injury and death chances of risky actions, a switch that stops an agent being killed outright, and a filter that makes the agents factions offer you all female or all male - including the Quettanauts, who in the base game can only ever offer men. Everything starts at the vanilla value, so the mod changes nothing until you turn a slider up. Works on an existing savegame."
          author="drjele"
          version="100"
-         date="2026-08-27"
+         date="2026-08-30"
          save="0"
 >
     <text language="44"

@@ -1,39 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  Agent characters for the factions the gender filter could not otherwise reach.
-
-  Vanilla gives these factions a single agent character each, so the filter had nothing to choose
-  between. What that meant differed per faction, and so does what is added here:
-
-    Quettanauts   'agent_kaori_arg' is bound to the male group, so a Quettanaut agent could only
-                  ever be male. The female group it needs ('kaori.crew.arg.female', three Argon
-                  female macros) already ships with Timelines - only the character entry was
-                  missing. Voice page 10602 is the one vanilla gives its female Argon agents.
-    Teladi-race   same story, through 'teladi.agent' -> 'teladi.factionrepresentative'; the two
-                  groups it is split into live in charactergroups.xml next to this file.
-
-  Skills and voice pages are copied verbatim from each faction's vanilla agent, so a forced agent is
-  the same character in every respect except which model it wears.
-
-  What keeps them out of the way is the tag on their category: 'drjele_agent' rather than 'agent'.
-  Tags are free-form - "tag is created if it doesn't exist", per scriptproperties.xml - and nothing
-  in the game looks for that one, so the <select tags="tag.agent"> vanilla spawns agents with never
-  sees these entries. They exist only for the filter to name explicitly, and the mod at its default
-  settings still changes nothing. (Leaving the category out entirely would do the same job on paper,
-  but not one of the 412 characters the game ships is written that way, and an unindexed entry that
-  cannot be resolved by id would leave a faction with no agent at all.)
-
-  The Paranid-race factions - Paranid, Holy Order, Alliance, Trinity, Buccaneers - and the Boron are
-  missing on purpose, because no mod can give them a female agent. The game ships one set of Paranid
-  bodies with no gender split, and character_paranid_rep_01_macro is flagged female="false". The
-  Boron look like they have the split - boron.agent selects between boron.agent.male and
-  boron.agent.female - but both of those groups resolve to the same and only Boron character macro,
-  character_boron_suit_base_01_macro, which is also flagged female="false". The two group names are
-  a vanilla convention, not two models.
-
-  The Quettanaut entry needs Timelines, for the group it references. Without it that faction does
-  not exist either, so nothing ever asks for the character.
--->
 <diff>
 
     <add sel="/characters">
@@ -51,7 +16,6 @@
             <page exact="10602"/>
             <owner exact="kaori"/>
         </character>
-
 
         <character id="drjele_agent_teladi_female" group="drjele.teladi.agent.female">
             <category tags="[drjele_agent]" faction="teladi" race="teladi"/>

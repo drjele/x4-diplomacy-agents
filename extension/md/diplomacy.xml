@@ -1,34 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  Patches for the vanilla diplomacy script. Four independent inserts, each one reading its own
-  setting and doing nothing at the setting's vanilla default.
-
-  Every setting is looked up the same way: the global the options menu writes wins, otherwise the
-  table drjele_diplomacy_agents.xml publishes, otherwise the literal vanilla value - all of them
-  global variables, so a configuration script that fails to load degrades to stock behaviour
-  instead of breaking diplomacy. The table is tested for existence rather than the field inside it,
-  so a setting edited to 0 in the file is still read as 0 and not mistaken for "not configured".
--->
 <diff>
 
-    <!--
-      Experience multiplier. AgentExperience_RewardEvaluation is the only place in the game that
-      hands out agent experience: it rolls $Experience from the risk of the action, then gives it to
-      the skill the action prefers and a fifth of it to the other one. Scaling $Experience before
-      that split therefore scales both skills, and the achievement check below it, in one place.
-    -->
     <add sel="//library[@name='AgentExperience_RewardEvaluation']/actions/do_if[@value='$ActionID']" pos="before">
         <set_value name="$DrJeleXpFactor" exact="if global.$DrJeleDiplomacyXpFactor? then global.$DrJeleDiplomacyXpFactor else (if global.$DrJeleDiplomacyConfig? then global.$DrJeleDiplomacyConfig.$XpFactor else 1)"/>
         <set_value name="$Experience" exact="[1, ($Experience * $DrJeleXpFactor)i].max"/>
     </add>
 
-    <!--
-      Experience for an agent that comes back injured. Vanilla pays experience only when the agent
-      survives unhurt - a failed action still counts, an injury does not - and Risk_EvaluateOutcome
-      is where the injury is applied, so it is where the consolation prize goes. The roll is the
-      no-risk one (1-8, decreasing), scaled by the multiplier and by the percentage, then split
-      evenly between both skills the way vanilla splits experience from diplomacy events.
-    -->
     <add sel="//library[@name='Risk_EvaluateOutcome']/actions/do_elseif[@value='$AgentOutcome == agentresult.injured']">
         <set_value name="$DrJeleInjuredXpPercent" exact="if global.$DrJeleDiplomacyInjuredXpPercent? then global.$DrJeleDiplomacyInjuredXpPercent else (if global.$DrJeleDiplomacyConfig? then global.$DrJeleDiplomacyConfig.$InjuredXpPercent else 0)"/>
         <do_if value="$DrJeleInjuredXpPercent gt 0">
@@ -40,15 +17,6 @@
         </do_if>
     </add>
 
-    <!--
-      Risk scale and the death switch, on the agent-action path. Success_Evaluation picks the injury
-      and death chances from the risk of the action (low 15/0, medium 25/5, high 40/20, veryhigh
-      70/30) and then rolls against them; this lands between the two, after the last branch of the
-      chain, so both numbers are already set and neither roll has happened yet.
-
-      The two settings stack in the order you would expect: the scale thins out both chances, then
-      the switch can still zero the death one on its own, leaving the injury chance the scale left.
-    -->
     <add sel="//library[@name='Success_Evaluation']//do_elseif[@value='$Risk == agentrisk.veryhigh']" pos="after">
         <set_value name="$DrJeleRiskPercent" exact="if global.$DrJeleDiplomacyRiskPercent? then global.$DrJeleDiplomacyRiskPercent else (if global.$DrJeleDiplomacyConfig? then global.$DrJeleDiplomacyConfig.$RiskPercent else 100)"/>
         <set_value name="$InjuryChance" exact="($InjuryChance * $DrJeleRiskPercent) / 100"/>
@@ -58,12 +26,6 @@
         </do_if>
     </add>
 
-    <!--
-      The same again on the diplomacy-event path. The game keeps a second copy of the whole risk
-      block in DiplomaticEvent_Concluded, for the agent committed to an event option when the event
-      goes the other way, and it is not shared with the one above - so a patch on one of them alone
-      would leave half the ways an agent can get hurt untouched.
-    -->
     <add sel="//cue[@name='DiplomaticEvent_Concluded']/actions//do_elseif[@value='$Risk == agentrisk.veryhigh']" pos="after">
         <set_value name="$DrJeleRiskPercent" exact="if global.$DrJeleDiplomacyRiskPercent? then global.$DrJeleDiplomacyRiskPercent else (if global.$DrJeleDiplomacyConfig? then global.$DrJeleDiplomacyConfig.$RiskPercent else 100)"/>
         <set_value name="$InjuryChance" exact="($InjuryChance * $DrJeleRiskPercent) / 100"/>
@@ -73,20 +35,6 @@
         </do_if>
     </add>
 
-    <!--
-      The stand-in the game sends on the mission. An agent on an operation is not the actor you hired:
-      AgentActor_CloneHandling builds a clone for the trip, copying the name and the five skills but
-      picking the model itself, with the same <select tags="tag.agent"> and no reference to the agent
-      it is standing in for. In vanilla that lands on the same character anyway, because the clone is
-      seeded from the agent's own seed and draws from the same one or two entries. An agent this mod
-      forced to a gender breaks that symmetry: at the Quettanauts, whose only tagged agent character
-      is the male one, the clone came out male for a female agent - a different person wearing her
-      name at the far end of the mission.
-
-      So the clone is picked the same way the agent was, except keyed on the agent's own gender rather
-      than on the option: change the setting after hiring someone and her stand-in still looks like
-      her. Factions with no pair in the table fall through to the vanilla select, untouched.
-    -->
     <replace sel="//library[@name='AgentActor_CloneHandling']/actions/create_cue_actor">
         <set_value name="$DrJeleCloneCharacters" exact="@global.$DrJeleDiplomacyConfig.$AgentCharacters.{'$' + $PreviousFaction.id}"/>
         <set_value name="$DrJeleCloneCharacter" exact="if $DrJeleCloneCharacters then (if $Agent.isfemale then $DrJeleCloneCharacters.{1} else $DrJeleCloneCharacters.{2}) else null"/>
