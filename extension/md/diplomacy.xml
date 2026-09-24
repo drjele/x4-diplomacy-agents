@@ -4,6 +4,7 @@
     <add sel="//library[@name='AgentExperience_RewardEvaluation']/actions/do_if[@value='$ActionID']" pos="before">
         <set_value name="$DrJeleXpFactor" exact="if global.$DrJeleDiplomacyXpFactor? then global.$DrJeleDiplomacyXpFactor else (if global.$DrJeleDiplomacyConfig? then global.$DrJeleDiplomacyConfig.$XpFactor else 1)"/>
         <set_value name="$Experience" exact="[1, ($Experience * $DrJeleXpFactor)i].max"/>
+        <debug_text text="'DrJele Diplomacy Agents: experience factor %s, agent earns %s'.[$DrJeleXpFactor, $Experience]" chance="if global.$DrJeleDiplomacyDebugChance? then global.$DrJeleDiplomacyDebugChance else 0"/>
     </add>
 
     <add sel="//library[@name='Risk_EvaluateOutcome']/actions/do_elseif[@value='$AgentOutcome == agentresult.injured']">
@@ -14,6 +15,7 @@
             <set_value name="$DrJeleInjuredXp" exact="[1, (($DrJeleInjuredXp * $DrJeleXpFactor * $DrJeleInjuredXpPercent) / 100)i].max"/>
             <set_value name="$Agent.$diplomacy_exp_negotiation" operation="add" exact="[1, ($DrJeleInjuredXp / 2)i].max"/>
             <set_value name="$Agent.$diplomacy_exp_espionage" operation="add" exact="[1, ($DrJeleInjuredXp / 2)i].max"/>
+            <debug_text text="'DrJele Diplomacy Agents: injured agent %s keeps %s experience (%s percent)'.[$Agent.knownname, $DrJeleInjuredXp, $DrJeleInjuredXpPercent]" chance="if global.$DrJeleDiplomacyDebugChance? then global.$DrJeleDiplomacyDebugChance else 0"/>
         </do_if>
     </add>
 
@@ -24,6 +26,7 @@
         <do_if value="not (if global.$DrJeleDiplomacyAgentsCanDie? then global.$DrJeleDiplomacyAgentsCanDie else (if global.$DrJeleDiplomacyConfig? then global.$DrJeleDiplomacyConfig.$AgentsCanDie else 1))">
             <set_value name="$DeathChance" exact="0"/>
         </do_if>
+        <debug_text text="'DrJele Diplomacy Agents: risk %s scaled to %s percent, injury chance %s, death chance %s'.[$Risk, $DrJeleRiskPercent, $InjuryChance, $DeathChance]" chance="if global.$DrJeleDiplomacyDebugChance? then global.$DrJeleDiplomacyDebugChance else 0"/>
     </add>
 
     <add sel="//cue[@name='DiplomaticEvent_Concluded']/actions//do_elseif[@value='$Risk == agentrisk.veryhigh']" pos="after">
@@ -33,11 +36,13 @@
         <do_if value="not (if global.$DrJeleDiplomacyAgentsCanDie? then global.$DrJeleDiplomacyAgentsCanDie else (if global.$DrJeleDiplomacyConfig? then global.$DrJeleDiplomacyConfig.$AgentsCanDie else 1))">
             <set_value name="$DeathChance" exact="0"/>
         </do_if>
+        <debug_text text="'DrJele Diplomacy Agents: risk %s scaled to %s percent, injury chance %s, death chance %s'.[$Risk, $DrJeleRiskPercent, $InjuryChance, $DeathChance]" chance="if global.$DrJeleDiplomacyDebugChance? then global.$DrJeleDiplomacyDebugChance else 0"/>
     </add>
 
     <replace sel="//library[@name='AgentActor_CloneHandling']/actions/create_cue_actor">
         <set_value name="$DrJeleCloneCharacters" exact="@global.$DrJeleDiplomacyConfig.$AgentCharacters.{'$' + $PreviousFaction.id}"/>
         <set_value name="$DrJeleCloneCharacter" exact="if $DrJeleCloneCharacters then (if $Agent.isfemale then $DrJeleCloneCharacters.{1} else $DrJeleCloneCharacters.{2}) else null"/>
+        <debug_text text="'DrJele Diplomacy Agents: clone of %s from %s uses character %s'.[$Agent.knownname, $PreviousFaction.id, $DrJeleCloneCharacter]" chance="if global.$DrJeleDiplomacyDebugChance? then global.$DrJeleDiplomacyDebugChance else 0"/>
         <do_if value="$DrJeleCloneCharacter">
             <create_cue_actor name="$AgentClone" cue="$ActionSetupCue" seed="$seed" ref="$DrJeleCloneCharacter">
                 <name name="$Agent.name"/>

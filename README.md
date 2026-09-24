@@ -106,6 +106,8 @@ Every setting is looked up the same way — the global the options menu writes w
 
 ## Debugging
 
+The mod is silent by default. Turn on **Debug logging** in **Options → Extension Options → Diplomacy Agents** (needs SirNukes Mod Support APIs) and every experience award, injured-agent experience, risk evaluation, clone and new agent the mod touches is written to the debug log, prefixed `DrJele Diplomacy Agents:`. That needs the game started with `-debug scripts`.
+
 Add `-debug scripts -logfile debuglog.txt` to the game's launch options. A diff that silently does nothing looks exactly like a mod that is not working, and a patch whose XPath finds no node says so outright:
 
 ```

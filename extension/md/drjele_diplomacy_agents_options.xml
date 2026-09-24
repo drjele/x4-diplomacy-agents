@@ -66,6 +66,17 @@
             $args      = table[$min = 0, $max = 2, $step = 1],
             $callback  = OnGenderChanged,
             ]"/>
+                <signal_cue_instantly
+                        cue="md.Simple_Menu_Options.Register_Option"
+                        param="table[
+            $id        = 'drjele_diplomacy_agents_debug',
+            $category  = 'Diplomacy Agents',
+            $name      = 'Debug logging',
+            $mouseover = 'Writes every experience award, risk evaluation and agent spawn the mod changes to the debug log. Needs the game started with -debug scripts.',
+            $type      = 'button',
+            $default   = 0,
+            $callback  = OnDebugChanged,
+            ]"/>
             </actions>
         </cue>
 
@@ -111,6 +122,15 @@
             </conditions>
             <actions>
                 <set_value name="global.$DrJeleDiplomacyAgentGender" exact="event.param.$value"/>
+            </actions>
+        </cue>
+
+        <cue name="OnDebugChanged" instantiate="true">
+            <conditions>
+                <event_cue_signalled/>
+            </conditions>
+            <actions>
+                <set_value name="global.$DrJeleDiplomacyDebugChance" exact="if event.param.$value then 100 else 0"/>
             </actions>
         </cue>
 

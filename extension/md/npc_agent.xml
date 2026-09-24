@@ -12,6 +12,7 @@
                 </do_if>
             </do_if>
 
+            <debug_text text="'DrJele Diplomacy Agents: new %s agent, gender option %s, character %s'.[$AgentActorOwner.id, $DrJeleAgentGender, $DrJeleAgentCharacter]" chance="if global.$DrJeleDiplomacyDebugChance? then global.$DrJeleDiplomacyDebugChance else 0"/>
             <do_if value="$DrJeleAgentCharacter">
                 <create_cue_actor name="$AgentActor" cue="AgentsActivated" ref="$DrJeleAgentCharacter" seed="this.$seed">
                     <owner exact="$AgentActorOwner"/>

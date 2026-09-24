@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [v1.1.0] - 2026-09-24 - Debug logging
+
 ### Changed
 
 - Standardize repository settings, development checks, code style and documentation.
@@ -11,6 +13,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- Debug log output for every experience award, injured-agent experience, risk evaluation, agent clone and new agent the mod changes, and a **Debug logging** toggle in Extension Options to switch it on.
 - `publish.sh update` options `--minor`, `--namedesc` and `--readback`, for an update that leaves the version number alone, one that also pushes the name and description to Steam, and one that writes Steam's own text back into `content.xml.steam`.
 
 ### Fixed
@@ -30,4 +33,5 @@ All notable changes to this project will be documented in this file.
 - Optional in-game controls through SirNukes Mod Support APIs, with vanilla-equivalent defaults and file-based configuration fallbacks.
 - Existing-save support, X4 9.00 compatibility, and installation and Steam Workshop publishing helpers.
 
+[v1.1.0]: https://github.com/drjele/x4-diplomacy-agents/releases/tag/v1.1.0
 [v1.0.0]: https://github.com/drjele/x4-diplomacy-agents/releases/tag/v1.0.0
